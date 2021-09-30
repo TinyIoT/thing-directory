@@ -15,7 +15,7 @@ import (
 	jsonpath "github.com/bhmj/jsonslice"
 	jsonpatch "github.com/evanphx/json-patch/v5"
 	"github.com/linksmart/service-catalog/v3/utils"
-	"github.com/linksmart/thing-directory/wot"
+	"github.com/tinyiot/thing-directory/wot"
 	uuid "github.com/satori/go.uuid"
 )
 

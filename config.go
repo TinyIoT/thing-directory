@@ -10,7 +10,7 @@ import (
 	"github.com/kelseyhightower/envconfig"
 	"github.com/linksmart/go-sec/auth/obtainer"
 	"github.com/linksmart/go-sec/auth/validator"
-	"github.com/linksmart/thing-directory/catalog"
+	"github.com/tinyiot/thing-directory/catalog"
 )
 
 type Config struct {

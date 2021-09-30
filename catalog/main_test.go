@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/linksmart/thing-directory/wot"
+	"github.com/tinyiot/thing-directory/wot"
 )
 
 const (

@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/linksmart/thing-directory/wot"
+	"github.com/tinyiot/thing-directory/wot"
 	uuid "github.com/satori/go.uuid"
 )
 

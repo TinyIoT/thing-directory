@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
-	"github.com/linksmart/thing-directory/catalog"
-	"github.com/linksmart/thing-directory/wot"
+	"github.com/tinyiot/thing-directory/catalog"
+	"github.com/tinyiot/thing-directory/wot"
 )
 
 const (

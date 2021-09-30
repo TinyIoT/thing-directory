@@ -6,8 +6,8 @@ import (
 	"log"
 
 	jsonpatch "github.com/evanphx/json-patch/v5"
-	"github.com/linksmart/thing-directory/catalog"
-	"github.com/linksmart/thing-directory/wot"
+	"github.com/tinyiot/thing-directory/catalog"
+	"github.com/tinyiot/thing-directory/wot"
 )
 
 type Controller struct {

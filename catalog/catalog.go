@@ -5,7 +5,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/linksmart/thing-directory/wot"
+	"github.com/tinyiot/thing-directory/wot"
 )
 
 type ThingDescription = map[string]interface{}

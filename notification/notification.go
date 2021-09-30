@@ -1,8 +1,8 @@
 package notification
 
 import (
-	"github.com/linksmart/thing-directory/catalog"
-	"github.com/linksmart/thing-directory/wot"
+	"github.com/tinyiot/thing-directory/catalog"
+	"github.com/tinyiot/thing-directory/wot"
 )
 
 type Event struct {
