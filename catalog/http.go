@@ -1,4 +1,3 @@
-// Copyright 2014-2016 Fraunhofer Institute for Applied Information Technology FIT
 
 package catalog
 
@@ -11,7 +10,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/linksmart/service-catalog/v3/utils"
-	"github.com/linksmart/thing-directory/wot"
+	"github.com/tinyiot/thing-directory/wot"
 )
 
 const (
