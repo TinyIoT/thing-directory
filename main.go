@@ -25,10 +25,9 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-const LINKSMART = `
-╦   ╦ ╔╗╔ ╦╔═ ╔═╗ ╔╦╗ ╔═╗ ╦═╗ ╔╦╗
-║   ║ ║║║ ╠╩╗ ╚═╗ ║║║ ╠═╣ ╠╦╝  ║
-╩═╝ ╩ ╝╚╝ ╩ ╩ ╚═╝ ╩ ╩ ╩ ╩ ╩╚═  ╩
+const TinyIoT = `
+▀█▀ █ █▄░█ █▄█   █ █▀█ ▀█▀
+░█░ █ █░▀█ ░█░   █ █▄█ ░█░
 `
 
 const (
@@ -51,7 +50,7 @@ func main() {
 		return
 	}
 
-	fmt.Print(LINKSMART)
+	fmt.Print(TinyIoT)
 	log.Printf("Starting Thing Directory")
 	defer log.Println("Stopped.")
 
