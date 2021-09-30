@@ -1,4 +1,3 @@
-// Copyright 2014-2016 Fraunhofer Institute for Applied Information Technology FIT
 
 package catalog
 
@@ -8,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/linksmart/thing-directory/wot"
+	"github.com/tinyiot/thing-directory/wot"
 )
 
 const (

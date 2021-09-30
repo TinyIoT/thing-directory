@@ -5,11 +5,11 @@ openapi: 3.0.0
 
 info:
   version: "1.0.0-beta.22"
-  title: LinkSmart Thing Directory
-  description: API documetnation of the [LinkSmart Thing Directory](https://github.com/linksmart/thing-directory)
+  title: TinyIoT Thing Directory
+  description: API documetnation of the [TinyIoT Thing Directory](https://github.com/tinyiot/thing-directory)
   license:
     name: Apache 2.0
-    url: https://github.com/linksmart/thing-directory/blob/master/LICENSE
+    url: https://github.com/tinyiot/thing-directory/blob/master/LICENSE
 
 tags:
   - name: things
@@ -30,7 +30,7 @@ paths:
       tags:
         - td
       summary: Retrieves paginated list of Thing Descriptions
-      description: The query languages, described [here](https://github.com/linksmart/thing-directory/wiki/Query-Language), can be used to filter results and fetch parts of Thing Descriptions.
+      description: The query languages, described [here](https://github.com/tinyiot/thing-directory/wiki/Query-Language), can be used to filter results and fetch parts of Thing Descriptions.
       parameters:
         - $ref: '#/components/parameters/ParamPage'
         - $ref: '#/components/parameters/ParamPerPage'
@@ -245,7 +245,7 @@ paths:
       tags:
         - things
       summary: Retrieves paginated list of Thing Descriptions
-      description: The query languages, described [here](https://github.com/linksmart/thing-directory/wiki/Query-Language), can be used to filter results and fetch parts of Thing Descriptions.
+      description: The query languages, described [here](https://github.com/tinyiot/thing-directory/wiki/Query-Language), can be used to filter results and fetch parts of Thing Descriptions.
       parameters:
         - $ref: '#/components/parameters/ParamPage'
         - $ref: '#/components/parameters/ParamPerPage'
@@ -455,7 +455,7 @@ paths:
       tags:
         - search
       summary: Query TDs with JSONPath expression
-      description: The query languages, described [here](https://github.com/linksmart/thing-directory/wiki/Query-Language), can be used to filter results and select parts of Thing Descriptions.
+      description: The query languages, described [here](https://github.com/tinyiot/thing-directory/wiki/Query-Language), can be used to filter results and select parts of Thing Descriptions.
       parameters:
         - name: query
           in: query
@@ -495,7 +495,7 @@ paths:
       tags:
         - search
       summary: Query TDs with XPath expression
-      description: The query languages, described [here](https://github.com/linksmart/thing-directory/wiki/Query-Language), can be used to filter results and select parts of Thing Descriptions.
+      description: The query languages, described [here](https://github.com/tinyiot/thing-directory/wiki/Query-Language), can be used to filter results and select parts of Thing Descriptions.
       parameters:
         - name: query
           in: query
@@ -853,7 +853,7 @@ components:
       summary: Example Paginated Thing Descriptions
       value:
         {
-          "@context": "https://linksmart.eu/thing-directory/context.jsonld",
+          "@context": "https://tinyiot.github.io/thing-directory/context.jsonld",
           "@type": "Catalog",
           "items":[
             {
