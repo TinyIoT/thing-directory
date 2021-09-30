@@ -73,7 +73,7 @@ func indexHandler(w http.ResponseWriter, _ *http.Request) {
 
 	data := struct {
 		Logo, Version, SourceRepo, Spec, SwaggerUIRelativeScheme, SwaggerUISecure string
-	}{LINKSMART, version, SourceCodeRepo, spec, swaggerUIRelativeScheme, swaggerUISecure}
+	}{TinyIoT, version, SourceCodeRepo, spec, swaggerUIRelativeScheme, swaggerUISecure}
 
 	tmpl := `
 <meta charset="UTF-8">
