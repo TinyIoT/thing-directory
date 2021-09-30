@@ -16,7 +16,7 @@ RUN apk --no-cache add ca-certificates
 
 ARG version
 ARG buildnum
-LABEL NAME="LinkSmart Thing Directory"
+LABEL NAME="TinyIoT Thing Directory"
 LABEL VERSION=${version}
 LABEL BUILD=${buildnum}
 
