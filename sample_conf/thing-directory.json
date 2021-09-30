@@ -1,5 +1,5 @@
 {
-  "description": "LinkSmart Thing Directory",
+  "description": "TinyIoT Thing Directory",
   "validation": {
     "jsonSchemas": []
   },
@@ -10,7 +10,7 @@
   "dnssd": {
     "publish": {
       "enabled": false,
-      "instance": "LinkSmart Thing Directory",
+      "instance": "TinyIoT Thing Directory",
       "domain": "local.",
       "interfaces": []
     }

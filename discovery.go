@@ -1,4 +1,3 @@
-// Copyright 2014-2016 Fraunhofer Institute for Applied Information Technology FIT
 
 package main
 
@@ -12,7 +11,7 @@ import (
 	"github.com/linksmart/go-sec/auth/obtainer"
 	sc "github.com/linksmart/service-catalog/v3/catalog"
 	"github.com/linksmart/service-catalog/v3/client"
-	"github.com/linksmart/thing-directory/wot"
+	"github.com/tinyiot/thing-directory/wot"
 )
 
 // escape special characters as recommended by https://tools.ietf.org/html/rfc6763#section-4.3
@@ -90,7 +89,7 @@ func registerInServiceCatalog(conf *Config) (func() error, error) {
 				"apiVersion": Version,
 			},
 		}},
-		Doc: "https://github.com/linksmart/thing-directory",
+		Doc: "https://github.com/tinyiot/thing-directory",
 		//Meta: map[string]interface{}{},
 		TTL: uint32(conf.ServiceCatalog.TTL),
 	}

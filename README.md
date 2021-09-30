@@ -1,42 +1,37 @@
-# LinkSmart Thing Directory
-[![Docker Pulls](https://img.shields.io/docker/pulls/linksmart/td.svg)](https://hub.docker.com/r/linksmart/td/tags)
-[![GitHub tag (latest pre-release)](https://img.shields.io/github/tag-pre/linksmart/thing-directory.svg?label=pre-release)](https://github.com/linksmart/thing-directory/tags)
-[![CICD](https://github.com/linksmart/thing-directory/workflows/CICD/badge.svg)](https://github.com/linksmart/thing-directory/actions?query=workflow:CICD)
-[![DOI](https://joss.theoj.org/papers/10.21105/joss.03075/status.svg)](https://doi.org/10.21105/joss.03075)
-  
-This is an implementation of the [W3C WoT Thing Description Directory (TDD)](https://w3c.github.io/wot-discovery/), a registry of [Thing Descriptions](https://www.w3.org/TR/wot-thing-description/).
+# TinyIoT Thing Directory
+This is an implementation of the [W3C WoT Thing Description Directory (TDD)](https://w3c.github.io/wot-discovery/), a registry of [Thing Descriptions](https://www.w3.org/TR/wot-thing-description/). This project is an independent fork of [LinkSmart Thing Directory](https://github.com/linksmart/thing-directory).
 
 ## Getting Started
 Visit the following pages to get started:
-* [Deployment](https://github.com/linksmart/thing-directory/wiki/Deployment): How to deploy the software, as Docker container, Debian package, or platform-specific binary distributions
-* [Configuration](https://github.com/linksmart/thing-directory/wiki/Configuration): How to configure the server software with JSON files and environment variables
-* [API Documentation](https://linksmart.github.io/swagger-ui/dist/?url=https://raw.githubusercontent.com/linksmart/thing-directory/master/apidoc/openapi-spec.yml): How to interact with the networking APIs
+* [Deployment](../../wiki/Deployment): How to deploy the software, as Docker container, Debian package, or platform-specific binary distributions
+* [Configuration](../../wiki/Configuration): How to configure the server software with JSON files and environment variables
+* [API Documentation][1]: How to interact with the networking APIs
 
-**Further documentation are available in the [wiki](https://github.com/linksmart/thing-directory/wiki)**.
+**Further documentation are available in the [wiki](../../wiki)**.
 
 ## Features
 * Service Discovery
-  * [DNS-SD registration](https://github.com/linksmart/thing-directory/wiki/Discovery-with-DNS-SD)
+  * [DNS-SD registration](../../wiki/Discovery-with-DNS-SD)
   * [LinkSmart Service Catalog](https://github.com/linksmart/service-catalog) registration
 * RESTful API
-  * [HTTP API](https://linksmart.github.io/swagger-ui/dist/?url=https://raw.githubusercontent.com/linksmart/thing-directory/master/apidoc/openapi-spec.yml)
+  * [HTTP API][1]
     * Thing Description (TD) CRUD, catalog, and validation
-    * XPath 3.0 and JSONPath [query languages](https://github.com/linksmart/thing-directory/wiki/Query-Language)
-    * TD validation with JSON Schema ([default](https://github.com/linksmart/thing-directory/blob/master/wot/wot_td_schema.json))
+    * XPath 3.0 and JSONPath [query languages](../../wiki/Query-Language)
+    * TD validation with JSON Schema(s)
     * Request [authentication](https://github.com/linksmart/go-sec/wiki/Authentication) and [authorization](https://github.com/linksmart/go-sec/wiki/Authorization)
     * JSON-LD response format
 * Persistent Storage
   * LevelDB
-* CI/CD ([Github Actions](https://github.com/linksmart/thing-directory/actions?query=workflow:CICD))
+* CI/CD ([Github Actions](https://github.com/tinyiot/thing-directory/actions?query=workflow:CICD))
   * Automated testing
-  * Automated builds and releases ([Docker images](https://hub.docker.com/r/linksmart/td/tags?page=1&ordering=last_updated), [binaries](https://github.com/linksmart/thing-directory/releases))
+  * Automated builds and releases ([Docker images - TBA](#), [binaries](https://github.com/tinyiot/thing-directory/releases))
 
 ## Development
 The dependencies of this package are managed by [Go Modules](https://github.com/golang/go/wiki/Modules).
 
 Clone this repo:
 ```bash
-git clone https://github.com/linksmart/thing-directory.git
+git clone https://github.com/tinyiot/thing-directory.git
 cd thing-directory
 ```
 
@@ -76,3 +71,6 @@ go test ./...
 Contributions are welcome. 
 
 Please fork, make your changes, and submit a pull request. For major changes, please open an issue first and discuss it with the other authors.
+
+
+[1]: https://petstore.swagger.io?url=https://raw.githubusercontent.com/linksmart/thing-directory/master/apidoc/openapi-spec.yml

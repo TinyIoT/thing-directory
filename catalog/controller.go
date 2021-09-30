@@ -1,4 +1,3 @@
-// Copyright 2014-2016 Fraunhofer Institute for Applied Information Technology FIT
 
 package catalog
 
@@ -16,7 +15,7 @@ import (
 	jsonpath "github.com/bhmj/jsonslice"
 	jsonpatch "github.com/evanphx/json-patch/v5"
 	"github.com/linksmart/service-catalog/v3/utils"
-	"github.com/linksmart/thing-directory/wot"
+	"github.com/tinyiot/thing-directory/wot"
 	uuid "github.com/satori/go.uuid"
 )
 
