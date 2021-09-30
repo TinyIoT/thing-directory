@@ -1,4 +1,3 @@
-// Copyright 2014-2016 Fraunhofer Institute for Applied Information Technology FIT
 
 package main
 
@@ -18,23 +17,22 @@ import (
 	_ "github.com/linksmart/go-sec/auth/keycloak/obtainer"
 	_ "github.com/linksmart/go-sec/auth/keycloak/validator"
 	"github.com/linksmart/go-sec/auth/validator"
-	"github.com/linksmart/thing-directory/catalog"
-	"github.com/linksmart/thing-directory/notification"
-	"github.com/linksmart/thing-directory/wot"
+	"github.com/tinyiot/thing-directory/catalog"
+	"github.com/tinyiot/thing-directory/notification"
+	"github.com/tinyiot/thing-directory/wot"
 	"github.com/rs/cors"
 	uuid "github.com/satori/go.uuid"
 )
 
-const LINKSMART = `
-╦   ╦ ╔╗╔ ╦╔═ ╔═╗ ╔╦╗ ╔═╗ ╦═╗ ╔╦╗
-║   ║ ║║║ ╠╩╗ ╚═╗ ║║║ ╠═╣ ╠╦╝  ║
-╩═╝ ╩ ╝╚╝ ╩ ╩ ╚═╝ ╩ ╩ ╩ ╩ ╩╚═  ╩
+const TinyIoT = `
+▀█▀ █ █▄░█ █▄█   █ █▀█ ▀█▀
+░█░ █ █░▀█ ░█░   █ █▄█ ░█░
 `
 
 const (
-	SwaggerUISchemeLess = "linksmart.github.io/swagger-ui/dist"
+	SwaggerUISchemeLess = "petstore.swagger.io"
 	Spec                = "https://raw.githubusercontent.com/linksmart/thing-directory/{version}/apidoc/openapi-spec.yml"
-	SourceCodeRepo      = "https://github.com/linksmart/thing-directory"
+	SourceCodeRepo      = "https://github.com/tinyiot/thing-directory"
 )
 
 var (
@@ -51,7 +49,7 @@ func main() {
 		return
 	}
 
-	fmt.Print(LINKSMART)
+	fmt.Print(TinyIoT)
 	log.Printf("Starting Thing Directory")
 	defer log.Println("Stopped.")
 

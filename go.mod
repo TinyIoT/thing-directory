@@ -1,4 +1,4 @@
-module github.com/linksmart/thing-directory
+module github.com/tinyiot/thing-directory
 
 go 1.14
 

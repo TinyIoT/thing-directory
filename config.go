@@ -1,4 +1,3 @@
-// Copyright 2014-2016 Fraunhofer Institute for Applied Information Technology FIT
 
 package main
 
@@ -11,7 +10,7 @@ import (
 	"github.com/kelseyhightower/envconfig"
 	"github.com/linksmart/go-sec/auth/obtainer"
 	"github.com/linksmart/go-sec/auth/validator"
-	"github.com/linksmart/thing-directory/catalog"
+	"github.com/tinyiot/thing-directory/catalog"
 )
 
 type Config struct {
