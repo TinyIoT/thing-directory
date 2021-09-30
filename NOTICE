@@ -1,5 +1,8 @@
 TinyIoT Thing Directory
-Copyright 2021 Contributors (https://github.com/TinyIoT/thing-directory/graphs/contributors)
+Copyright 2021 The Contributors 
+
+The list of project contributors are available at:
+https://github.com/TinyIoT/thing-directory/graphs/contributors
 
 This software is a fork of the LinkSmart Thing Directory (https://github.com/linksmart/thing-directory)
 developed by the Fraunhofer Institute for Applied Information Technology (https://fit.fraunhofer.de),
@@ -8,15 +11,22 @@ a division of Fraunhofer Gesellschaft e. V.
 It includes the following dependencies developed by
 the corresponding developers and organisations:
 
-* https://eclipse.org/paho/clients/golang/ by the Eclipse Foundation (Eclipse Public License v1.0)
-* https://github.com/ancientlore/go-avltree by Michael Lore (MIT License)
-* https://github.com/urfave/negroni by Jeremy Saenz (MIT License)
-* http://www.gorillatoolkit.org/ by Rodrigo Moraes (BSD License)
-* https://github.com/justinas/alice by Justinas Stankevicius (MIT License)
-* https://github.com/kylewolfe/simplexml by Kyle Wolfe (MIT License)
-* https://github.com/oleksandr/bonjour by Oleksandr Lobunets (MIT License)
-* https://github.com/syndtr/goleveldb by Suryandaru Triandana (MIT License)
-* https://github.com/dgrijalva/jwt-go by Dave Grijalva (MIT License)
+* github.com/antchfx/jsonquery by authors (MIT License)
+* github.com/bhmj/jsonslice by bhmj (MIT License)
+* github.com/urfave/negroni by Jeremy Saenz (MIT License)
+* github.com/evanphx/json-patch by Evan Phoenix (BSD 3-Clause License)
+* github.com/gorilla/mux by The Gorilla Authors (BSD 3-Clause License)
+* github.com/gorilla/context by The Gorilla Authors (BSD 3-Clause License)
+* github.com/grandcat/zeroconf by Oleksandr Lobunets and Stefan Smarzly (MIT License)
+* github.com/justinas/alice by Justinas Stankevicius (MIT License)
+* github.com/kelseyhightower/envconfig by Kelsey Hightower (MIT License)
+* github.com/linksmart/service-catalog by Fraunhofer Gesellschaft (Apache 2.0 License)
+* github.com/linksmart/go-sec by Fraunhofer Gesellschaft (Apache 2.0 License)
+* github.com/rs/cors by Olivier Poitrey (MIT License)
+* github.com/satori/go.uuid by Maxim Bublis (MIT License)
+* github.com/syndtr/goleveldb by Suryandaru Triandana (MIT License)
+* github.com/xeipuuv/gojsonschema by xeipuuv (Apache 2.0 License)
+
 
 Moreover, it includes portions of source code from the following developers and organizations:
 
