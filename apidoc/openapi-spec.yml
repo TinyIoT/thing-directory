@@ -1,4 +1,4 @@
-openapi: 3.0.0
+openapi: 3.0.3
 
 #servers:
 #  - url: http://localhost:8081
@@ -6,7 +6,7 @@ openapi: 3.0.0
 info:
   version: "1.0.0-beta.22"
   title: TinyIoT Thing Directory
-  description: API documetnation of the [TinyIoT Thing Directory](https://github.com/tinyiot/thing-directory)
+  description: API documentation of the [TinyIoT Thing Directory](https://github.com/tinyiot/thing-directory)
   license:
     name: Apache 2.0
     url: https://github.com/tinyiot/thing-directory/blob/master/LICENSE
@@ -19,262 +19,23 @@ tags:
   - name: events
     description: Notification API
   - name: validation
-    description: Validation API
-  - name: td
-    description: Registration API (deprecated)
+    description: Validation API (non-normative)
 
 paths:
-  /td:
-    get:
-      deprecated: true
-      tags:
-        - td
-      summary: Retrieves paginated list of Thing Descriptions
-      description: The query languages, described [here](https://github.com/tinyiot/thing-directory/wiki/Query-Language), can be used to filter results and fetch parts of Thing Descriptions.
-      parameters:
-        - $ref: '#/components/parameters/ParamPage'
-        - $ref: '#/components/parameters/ParamPerPage'
-        - name: jsonpath
-          in: query
-          description: JSONPath expression for fetching specific items. E.g. `$[?(@.title=='Kitchen Lamp')].properties`
-          required: false
-          deprecated: true
-          schema:
-            type: string
-          # example: $[?(@.title=='Kitchen Lamp')].properties
-        - name: xpath
-          in: query
-          description: xPath 3.0 expression for fetching specific items. E.g. `//*[title='Kitchen Lamp']/properties`
-          required: false
-          deprecated: true
-          schema:
-            type: string
-          # example: //*[title='Kitchen Lamp']/properties
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/ld+json:
-              schema:
-                $ref: '#/components/schemas/ThingDescriptionPage'
-              examples:
-                ThingDescriptionList:
-                  $ref: '#/components/examples/ThingDescriptionList'
-        '400':
-          $ref: '#/components/responses/RespBadRequest'
-        '401':
-          $ref: '#/components/responses/RespUnauthorized'
-        '403':
-          $ref: '#/components/responses/RespForbidden'
-        '500':
-          $ref: '#/components/responses/RespInternalServerError'
-    post:
-      deprecated: true
-      tags:
-        - td
-      summary: Creates new Thing Description with system-generated ID
-      description: |
-        This is to create a TD and receive a unique system-generated `id` in response.<br>
-        The server rejects the request if there is an `id` in the body.<br>
-        For creating a TD with user-defined `id`, use the `PUT` method.
-      responses:
-        '201':
-          description: Created successfully
-          headers:
-            Location:
-              description: Path to the newly created Thing Description
-              schema:
-                type: string
-        '400':
-          $ref: '#/components/responses/RespValidationBadRequest'
-        '401':
-          $ref: '#/components/responses/RespUnauthorized'
-        '403':
-          $ref: '#/components/responses/RespForbidden'
-        '500':
-          $ref: '#/components/responses/RespInternalServerError'
-      requestBody:
-        content:
-          application/ld+json:
-            schema:
-              type: object
-            examples:
-              ThingDescription:
-                $ref: '#/components/examples/ThingDescriptionWithoutID'
-
-        description: Thing Description to be created
-        required: true
-  /td/{id}:
-    put:
-      deprecated: true
-      tags:
-        - td
-      summary: Creates a new Thing Description with the provided ID, or updates an existing one
-      description: |
-        The `id` in the path is the resource id and must match the one in Thing Description.<br>
-        For creating a TD without user-defined `id`, use the `POST` method.
-      parameters:
-        - name: id
-          in: path
-          description: ID of the Thing Description
-          example: "urn:example:1234"
-          required: true
-          schema:
-            type: string
-      responses:
-        '201':
-          description: A new Thing Description is created
-        '204':
-          description: Thing Description updated successfully
-        '400':
-          $ref: '#/components/responses/RespValidationBadRequest'
-        '401':
-          $ref: '#/components/responses/RespUnauthorized'
-        '403':
-          $ref: '#/components/responses/RespForbidden'
-        '409':
-          $ref: '#/components/responses/RespConflict'
-        '500':
-          $ref: '#/components/responses/RespInternalServerError'
-      requestBody:
-        content:
-          application/ld+json:
-            schema:
-              type: object
-            examples:
-              ThingDescription:
-                $ref: '#/components/examples/ThingDescriptionWithID'
-        description: The Thing Description object
-        required: true
-    patch:
-      deprecated: true
-      tags:
-        - td
-      summary: Patch a Thing Description
-      description: The patch document must be based on RFC7396 JSON Merge Patch
-      parameters:
-        - name: id
-          in: path
-          description: ID of the Thing Description
-          example: "urn:example:1234"
-          required: true
-          schema:
-            type: string
-      responses:
-        '204':
-          description: Thing Description patched successfully
-        '400':
-          $ref: '#/components/responses/RespValidationBadRequest'
-        '401':
-          $ref: '#/components/responses/RespUnauthorized'
-        '403':
-          $ref: '#/components/responses/RespForbidden'
-        '409':
-          $ref: '#/components/responses/RespConflict'
-        '500':
-          $ref: '#/components/responses/RespInternalServerError'
-      requestBody:
-        content:
-          application/merge-patch+json:
-            schema:
-              type: object
-            examples:
-              ThingDescription:
-                $ref: '#/components/examples/ThingDescriptionWithID'
-        description: The Thing Description object
-        required: true
-    get:
-      deprecated: true
-      tags:
-        - td
-      summary: Retrieves a Thing Description
-      parameters:
-        - name: id
-          in: path
-          description: ID of the Thing Description
-          example: "urn:example:1234"
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/ld+json:
-              schema:
-                type: object
-              examples:
-                response:
-                  $ref: '#/components/examples/ThingDescriptionWithID'
-        '400':
-          $ref: '#/components/responses/RespBadRequest'
-        '401':
-          $ref: '#/components/responses/RespUnauthorized'
-        '403':
-          $ref: '#/components/responses/RespForbidden'
-        '404':
-          $ref: '#/components/responses/RespNotfound'
-        '500':
-          $ref: '#/components/responses/RespInternalServerError'
-    delete:
-      deprecated: true
-      tags:
-        - td
-      summary: Deletes the Thing Description
-      parameters:
-        - name: id
-          in: path
-          description: ID of the Thing Description
-          required: true
-          schema:
-            type: string
-      responses:
-        '204':
-          description: Successful response
-        '401':
-          $ref: '#/components/responses/RespUnauthorized'
-        '403':
-          $ref: '#/components/responses/RespForbidden'
-        '404':
-          $ref: '#/components/responses/RespNotfound'
-        '500':
-          $ref: '#/components/responses/RespInternalServerError'
-
   /things:
     get:
       tags:
         - things
-      summary: Retrieves paginated list of Thing Descriptions
-      description: The query languages, described [here](https://github.com/tinyiot/thing-directory/wiki/Query-Language), can be used to filter results and fetch parts of Thing Descriptions.
-      parameters:
-        - $ref: '#/components/parameters/ParamPage'
-        - $ref: '#/components/parameters/ParamPerPage'
-        - name: jsonpath
-          in: query
-          description: JSONPath expression for fetching specific items. E.g. `$[?(@.title=='Kitchen Lamp')].properties`
-          required: false
-          deprecated: true
-          schema:
-            type: string
-          # example: $[?(@.title=='Kitchen Lamp')].properties
-        - name: xpath
-          in: query
-          description: xPath 3.0 expression for fetching specific items. E.g. `//*[title='Kitchen Lamp']/properties`
-          required: false
-          deprecated: true
-          schema:
-            type: string
-          # example: //*[title='Kitchen Lamp']/properties
+      summary: Retrieves the list of Thing Descriptions
       responses:
         '200':
           description: Successful response
           content:
             application/ld+json:
               schema:
-                $ref: '#/components/schemas/ThingDescriptionPage'
-              examples:
-                ThingDescriptionList:
-                  $ref: '#/components/examples/ThingDescriptionList'
+                type: array
+                items:
+                  $ref: '#/components/schemas/ThingDescription'
         '400':
           $ref: '#/components/responses/RespBadRequest'
         '401':
@@ -309,9 +70,9 @@ paths:
           $ref: '#/components/responses/RespInternalServerError'
       requestBody:
         content:
-          application/ld+json:
+          application/td+json:
             schema:
-              type: object
+              $ref: '#/components/schemas/ThingDescription'
             examples:
               ThingDescription:
                 $ref: '#/components/examples/ThingDescriptionWithoutID'
@@ -351,9 +112,9 @@ paths:
           $ref: '#/components/responses/RespInternalServerError'
       requestBody:
         content:
-          application/ld+json:
+          application/td+json:
             schema:
-              type: object
+              $ref: '#/components/schemas/ThingDescription'
             examples:
               ThingDescription:
                 $ref: '#/components/examples/ThingDescriptionWithID'
@@ -411,9 +172,9 @@ paths:
         '200':
           description: Successful response
           content:
-            application/ld+json:
+            application/td+json:
               schema:
-                type: object
+                $ref: '#/components/schemas/ThingDescription'
               examples:
                 response:
                   $ref: '#/components/examples/ThingDescriptionWithID'
@@ -599,7 +360,8 @@ paths:
       summary: Retrieves the validation result for a given Thing Description
       description: |
         The Thing Description should be provided as JSON in the request body.<br>
-        Note: This is currently not supported using Swagger UI.
+        Note: This is currently not supported using Swagger UI.<br>
+        This endpoint is non-normative.
       responses:
         '200':
           description: Validation Result
@@ -620,10 +382,10 @@ paths:
       #   content:
       #     application/ld+json:
       #       schema:
-      #         type: object
+      #         $ref: '#/components/schemas/ThingDescription'
       #       examples:
       #         ThingDescription:
-      #           $ref: '#/components/examples/ThingDescription'
+      #           $ref: '#/components/examples/ThingDescriptionWithID'
 security:
   - BasicAuth: []
   - BearerAuth: []
@@ -733,13 +495,6 @@ components:
                   required:
                     - id
   schemas:
-    ErrorResponse:
-      type: object
-      properties:
-        code:
-          type: integer
-        message:
-          type: string
     ProblemDetails:
       description: RFC7807 Problem Details (https://tools.ietf.org/html/rfc7807)
       properties:
@@ -776,25 +531,9 @@ components:
                     type: string
 
     ThingDescription:
-      description: WoT Thing Description
-      type: object
-    ThingDescriptionPage:
-      type: object
-      properties:
-        '@context':
-          format: url
-        '@type':
-          format: string
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/ThingDescription'
-        page:
-          type: integer
-        perPage:
-          type: integer
-        total:
-          type: integer
+      #type: object
+      $ref: 'https://raw.githubusercontent.com/w3c/wot-thing-description/main/validation/td-json-schema-validation.json'
+     
     ValidationResult:
       type: object
       properties:
@@ -849,34 +588,4 @@ components:
           "securityDefinitions": {"nosec_sc":{"scheme":"nosec"}
           }
         }
-    ThingDescriptionList:
-      summary: Example Paginated Thing Descriptions
-      value:
-        {
-          "@context": "https://tinyiot.github.io/thing-directory/context.jsonld",
-          "@type": "Catalog",
-          "items":[
-            {
-              "@context": "https://www.w3.org/2019/wot/td/v1",
-              "id": "urn:example:1234",
-              "title": "ExampleSensor",
-              "properties": {
-                "status": {
-                  "forms": [
-                    {
-                      "op": ["readproperty"],
-                      "href": "https://example.com/status",
-                      "contentType": "text/html"
-                    }
-                  ]
-                }
-              },
-              "security": ["nosec_sc"],
-              "securityDefinitions": {"nosec_sc":{"scheme":"nosec"}
-              }
-            }
-          ],
-          "page": 1,
-          "perPage": 100,
-          "total": 1
-        }
+    
