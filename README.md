@@ -73,4 +73,4 @@ Contributions are welcome.
 Please fork, make your changes, and submit a pull request. For major changes, please open an issue first and discuss it with the other authors.
 
 
-[1]: https://petstore.swagger.io?url=https://raw.githubusercontent.com/linksmart/thing-directory/master/apidoc/openapi-spec.yml
+[1]: https://petstore.swagger.io?url=https://raw.githubusercontent.com/tinyiot/thing-directory/master/apidoc/openapi-spec.yml
