@@ -1,13 +1,16 @@
 name: thing-directory
 base: core20 
-version: '1.0.0-beta'
+
+# take the version from part
+adopt-info: thing-directory
+
 summary: A W3C WoT Thing Description Directory
 description: |
   This is a lightweight implementation of a WoT Thing Description Directory,
   described by the [W3C Discovery](https://w3c.github.io/wot-discovery/) standard specification.
 
-grade: devel
-confinement: devmode
+grade: stable
+confinement: strict
 
 architectures:
   - build-on: amd64
@@ -20,6 +23,8 @@ apps:
     environment: 
       TD_VALIDATION_JSONSCHEMAS: "$SNAP/conf/wot_td_schema.json,$SNAP/conf/wot_discovery_schema.json"
     daemon: simple
+    plugs: 
+      - network-bind
 
 parts:
   thing-directory:
@@ -27,6 +32,9 @@ parts:
     source: .
     build-packages:
       - curl
+    override-pull: |
+      snapcraftctl pull
+      snapcraftctl set-version $(git describe)
     override-prime: |
       mkdir -p conf
       curl https://raw.githubusercontent.com/w3c/wot-thing-description/REC1.0/validation/td-json-schema-validation.json -o conf/wot_td_schema.json
