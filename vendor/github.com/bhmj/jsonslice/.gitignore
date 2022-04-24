@@ -1,7 +1,0 @@
-debug
-.vscode
-*.exe
-*.prof
-*.test
-coverage.out
-
