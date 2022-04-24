@@ -99,7 +99,7 @@ jobs:
       - name: Cross Compile go
         if: success()
         run: |
-          curl -s https://raw.githubusercontent.com/linksmart/ci-scripts/master/go/go-build.sh | bash
+          ./build.sh
           mkdir -p output/bin output/conf
           cp bin/* output/bin
           cp sample_conf/* wot/wot_td_schema.json output/conf
