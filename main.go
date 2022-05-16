@@ -1,4 +1,3 @@
-
 package main
 
 import (
@@ -17,11 +16,11 @@ import (
 	_ "github.com/linksmart/go-sec/auth/keycloak/obtainer"
 	_ "github.com/linksmart/go-sec/auth/keycloak/validator"
 	"github.com/linksmart/go-sec/auth/validator"
+	"github.com/rs/cors"
+	uuid "github.com/satori/go.uuid"
 	"github.com/tinyiot/thing-directory/catalog"
 	"github.com/tinyiot/thing-directory/notification"
 	"github.com/tinyiot/thing-directory/wot"
-	"github.com/rs/cors"
-	uuid "github.com/satori/go.uuid"
 )
 
 const TinyIoT = `
@@ -222,13 +221,13 @@ func setupHTTPRouter(config *HTTPConfig, api *catalog.HTTPAPI, notifAPI *notific
 
 	// Deprecated: use /things and /search instead
 	// TD CRUD, listing, filtering
-	r.get("/td", commonHandlers.ThenFunc(api.GetMany))
-	r.get("/td-chunked", commonHandlers.ThenFunc(api.GetAll))
-	r.post("/td", commonHandlers.ThenFunc(api.Post))
-	r.get("/td/{id:.+}", commonHandlers.ThenFunc(api.Get))
-	r.put("/td/{id:.+}", commonHandlers.ThenFunc(api.Put))
-	r.patch("/td/{id:.+}", commonHandlers.ThenFunc(api.Patch))
-	r.delete("/td/{id:.+}", commonHandlers.ThenFunc(api.Delete))
+	// r.get("/td", commonHandlers.ThenFunc(api.GetMany))
+	// r.get("/td-chunked", commonHandlers.ThenFunc(api.GetAll))
+	// r.post("/td", commonHandlers.ThenFunc(api.Post))
+	// r.get("/td/{id:.+}", commonHandlers.ThenFunc(api.Get))
+	// r.put("/td/{id:.+}", commonHandlers.ThenFunc(api.Put))
+	// r.patch("/td/{id:.+}", commonHandlers.ThenFunc(api.Patch))
+	// r.delete("/td/{id:.+}", commonHandlers.ThenFunc(api.Delete))
 
 	// CRUDL
 	r.post("/things", commonHandlers.ThenFunc(api.Post))             // create anonymous
@@ -236,7 +235,7 @@ func setupHTTPRouter(config *HTTPConfig, api *catalog.HTTPAPI, notifAPI *notific
 	r.get("/things/{id:.+}", commonHandlers.ThenFunc(api.Get))       // retrieve
 	r.patch("/things/{id:.+}", commonHandlers.ThenFunc(api.Patch))   // partially update
 	r.delete("/things/{id:.+}", commonHandlers.ThenFunc(api.Delete)) // delete
-	r.get("/things", commonHandlers.ThenFunc(api.GetAll))            // listing
+	r.get("/things", commonHandlers.ThenFunc(api.List))              // listing
 
 	// search
 	r.get("/search/jsonpath", commonHandlers.ThenFunc(api.SearchJSONPath))

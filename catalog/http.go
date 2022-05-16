@@ -1,4 +1,3 @@
-
 package catalog
 
 import (
@@ -7,32 +6,21 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
-	"github.com/linksmart/service-catalog/v3/utils"
 	"github.com/tinyiot/thing-directory/wot"
 )
 
 const (
-	MaxPerPage = 100
+	MaxLimit = 100
 	// query parameters
-	QueryParamPage        = "page"
-	QueryParamPerPage     = "per_page"
+	QueryParamOffset      = "offset"
+	QueryParamLimit       = "limit"
 	QueryParamJSONPath    = "jsonpath"
 	QueryParamXPath       = "xpath"
 	QueryParamSearchQuery = "query"
-	// Deprecated
-	QueryParamFetchPath = "fetch"
 )
-
-type ThingDescriptionPage struct {
-	Context string      `json:"@context"`
-	Type    string      `json:"@type"`
-	Items   interface{} `json:"items"`
-	Page    int         `json:"page"`
-	PerPage int         `json:"perPage"`
-	Total   int         `json:"total"`
-}
 
 type ValidationResult struct {
 	Valid  bool     `json:"valid"`
@@ -254,94 +242,72 @@ func (a *HTTPAPI) Delete(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// GetMany lists entries in a paginated catalog format
-func (a *HTTPAPI) GetMany(w http.ResponseWriter, req *http.Request) {
+// List lists entries in paginated format or as a stream
+func (a *HTTPAPI) List(w http.ResponseWriter, req *http.Request) {
 	err := req.ParseForm()
 	if err != nil {
 		ErrorResponse(w, http.StatusBadRequest, "Error parsing the query:", err.Error())
 		return
 	}
-	page, perPage, err := utils.ParsePagingParams(
-		req.Form.Get(QueryParamPage), req.Form.Get(QueryParamPerPage), MaxPerPage)
-	if err != nil {
-		ErrorResponse(w, http.StatusBadRequest, "Error parsing query parameters:", err.Error())
-		return
-	}
 
-	var items interface{}
-	var total int
-	if jsonPath := req.Form.Get(QueryParamJSONPath); jsonPath != "" {
-		if req.Form.Get(QueryParamXPath) != "" {
-			ErrorResponse(w, http.StatusBadRequest, "query with jsonpath should not be mixed with xpath")
-			return
-		}
-		w.Header().Add("X-Request-Jsonpath", jsonPath)
-		items, total, err = a.controller.filterJSONPath(jsonPath, page, perPage)
-		if err != nil {
-			switch err.(type) {
-			case *BadRequestError:
-				ErrorResponse(w, http.StatusBadRequest, err.Error())
-				return
-			default:
-				ErrorResponse(w, http.StatusInternalServerError, err.Error())
-				return
-			}
-		}
-	} else if xPath := req.Form.Get(QueryParamXPath); xPath != "" {
-		w.Header().Add("X-Request-Xpath", xPath)
-		items, total, err = a.controller.filterXPath(xPath, page, perPage)
-		if err != nil {
-			switch err.(type) {
-			case *BadRequestError:
-				ErrorResponse(w, http.StatusBadRequest, err.Error())
-				return
-			default:
-				ErrorResponse(w, http.StatusInternalServerError, err.Error())
-				return
-			}
-		}
-	} else if req.Form.Get(QueryParamFetchPath) != "" {
-		ErrorResponse(w, http.StatusBadRequest, "fetch query parameter is deprecated. Use jsonpath or xpath")
+	// pagination is done only when limit is set
+	if req.Form.Get(QueryParamLimit) != "" {
+		a.listPaginated(w, req)
 		return
 	} else {
-		items, total, err = a.controller.list(page, perPage)
+		a.listStream(w, req)
+		return
+	}
+}
+
+func (a *HTTPAPI) listPaginated(w http.ResponseWriter, req *http.Request) {
+	var err error
+	var limit, offset int
+
+	limitStr := req.Form.Get(QueryParamLimit)
+	if limitStr != "" {
+		limit, err = strconv.Atoi(limitStr)
 		if err != nil {
-			switch err.(type) {
-			case *BadRequestError:
-				ErrorResponse(w, http.StatusBadRequest, err.Error())
-				return
-			default:
-				ErrorResponse(w, http.StatusInternalServerError, err.Error())
-				return
-			}
+			ErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
 		}
 	}
 
-	coll := &ThingDescriptionPage{
-		Context: ResponseContextURL,
-		Type:    ResponseType,
-		Items:   items,
-		Page:    page,
-		PerPage: perPage,
-		Total:   total,
+	offsetStr := req.Form.Get(QueryParamOffset)
+	if offsetStr != "" {
+		offset, err = strconv.Atoi(offsetStr)
+		if err != nil {
+			ErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
 	}
 
-	b, err := json.Marshal(coll)
+	items, _, err := a.controller.list(offset, limit)
+	if err != nil {
+		switch err.(type) {
+		case *BadRequestError:
+			ErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		default:
+			ErrorResponse(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+	}
+
+	b, err := json.Marshal(items)
 	if err != nil {
 		ErrorResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	w.Header().Set("Content-Type", wot.MediaTypeJSONLD)
-	w.Header().Set("X-Request-URL", req.RequestURI)
 	_, err = w.Write(b)
 	if err != nil {
 		log.Printf("ERROR writing HTTP response: %s", err)
 	}
 }
 
-// GetAll lists entries in a paginated catalog format
-func (a *HTTPAPI) GetAll(w http.ResponseWriter, req *http.Request) {
+func (a *HTTPAPI) listStream(w http.ResponseWriter, req *http.Request) {
 	//flusher, ok := w.(http.Flusher)
 	//if !ok {
 	//	panic("expected http.ResponseWriter to be an http.Flusher")

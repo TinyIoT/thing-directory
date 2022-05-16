@@ -1,4 +1,3 @@
-
 package catalog
 
 import (
@@ -15,8 +14,8 @@ import (
 	jsonpath "github.com/bhmj/jsonslice"
 	jsonpatch "github.com/evanphx/json-patch/v5"
 	"github.com/linksmart/service-catalog/v3/utils"
-	"github.com/tinyiot/thing-directory/wot"
 	uuid "github.com/satori/go.uuid"
+	"github.com/tinyiot/thing-directory/wot"
 )
 
 var controllerExpiryCleanupInterval = 60 * time.Second // to be modified in unit tests
@@ -198,8 +197,15 @@ func (c *Controller) delete(id string) error {
 	return nil
 }
 
-func (c *Controller) list(page, perPage int) ([]ThingDescription, int, error) {
-	tds, total, err := c.storage.list(page, perPage)
+func (c *Controller) list(offset, limit int) ([]ThingDescription, int, error) {
+	if offset < 0 || limit < 0 {
+		return nil, 0, fmt.Errorf("offset and limit must not be negative")
+	}
+	if limit > MaxLimit {
+		return nil, 0, fmt.Errorf("limit must be smaller than %s", MaxLimit)
+	}
+
+	tds, total, err := c.storage.list(offset, limit)
 	if err != nil {
 		return nil, 0, err
 	}

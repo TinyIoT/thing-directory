@@ -1,4 +1,3 @@
-
 package catalog
 
 import (
@@ -33,7 +32,7 @@ type CatalogController interface {
 	update(id string, d ThingDescription) error
 	patch(id string, d ThingDescription) error
 	delete(id string) error
-	list(page, perPage int) ([]ThingDescription, int, error)
+	list(offset, limit int) ([]ThingDescription, int, error)
 	listAllBytes() ([]byte, error)
 	// Deprecated
 	filterJSONPath(path string, page, perPage int) ([]interface{}, int, error)
@@ -57,7 +56,7 @@ type Storage interface {
 	update(id string, td ThingDescription) error
 	delete(id string) error
 	get(id string) (ThingDescription, error)
-	list(page, perPage int) ([]ThingDescription, int, error)
+	list(offset, limit int) ([]ThingDescription, int, error)
 	listAllBytes() ([]byte, error)
 	total() (int, error)
 	iterator() <-chan ThingDescription
