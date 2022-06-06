@@ -1,7 +1,6 @@
 package catalog
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -13,9 +12,12 @@ import (
 	xpath "github.com/antchfx/jsonquery"
 	jsonpath "github.com/bhmj/jsonslice"
 	jsonpatch "github.com/evanphx/json-patch/v5"
-	"github.com/linksmart/service-catalog/v3/utils"
 	uuid "github.com/satori/go.uuid"
 	"github.com/tinyiot/thing-directory/wot"
+)
+
+const (
+	MaxLimit = 100
 )
 
 var controllerExpiryCleanupInterval = 60 * time.Second // to be modified in unit tests
@@ -197,89 +199,25 @@ func (c *Controller) delete(id string) error {
 	return nil
 }
 
-func (c *Controller) list(offset, limit int) ([]ThingDescription, int, error) {
+func (c *Controller) listPaginate(offset, limit int) ([]ThingDescription, error) {
 	if offset < 0 || limit < 0 {
-		return nil, 0, fmt.Errorf("offset and limit must not be negative")
+		return nil, fmt.Errorf("offset and limit must not be negative")
 	}
 	if limit > MaxLimit {
-		return nil, 0, fmt.Errorf("limit must be smaller than %s", MaxLimit)
+		return nil, fmt.Errorf("limit must be smaller than %d", MaxLimit)
 	}
 
-	tds, total, err := c.storage.list(offset, limit)
+	tds, err := c.storage.listPaginate(offset, limit)
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 
-	return tds, total, nil
-}
-
-func (c *Controller) listAll() ([]ThingDescription, int, error) {
-	var items []ThingDescription
-	pp := MaxPerPage
-	for p := 1; ; p++ {
-		slice, total, err := c.storage.list(p, pp)
-		if err != nil {
-			return nil, 0, err
-		}
-		items = append(items, slice...)
-
-		if p*pp >= total {
-			return items, total, nil
-		}
-	}
-}
-
-func (c *Controller) listAllBytes() ([]byte, error) {
-	return c.storage.listAllBytes()
-}
-
-// Deprecated
-// Note: filterJSONPath performs several (de-)serializations
-// Use filterJSONPathBytes to query bytes directly
-func (c *Controller) filterJSONPath(path string, page, perPage int) ([]interface{}, int, error) {
-	var results []interface{}
-
-	// query all items
-	items, total, err := c.listAll()
-	if err != nil {
-		return nil, 0, err
-	}
-	if total == 0 {
-		return results, 0, nil
-	}
-
-	// serialize to json
-	b, err := json.Marshal(items)
-	if err != nil {
-		return nil, 0, fmt.Errorf("error serializing for jsonpath: %s", err)
-	}
-	items = nil
-
-	// filter results with jsonpath
-	b, err = jsonpath.Get(b, path)
-	if err != nil {
-		return nil, 0, &BadRequestError{S: fmt.Sprintf("error evaluating jsonpath: %s", err)}
-	}
-
-	// de-serialize the filtered results
-	err = json.Unmarshal(b, &results)
-	if err != nil {
-		return nil, 0, fmt.Errorf("error de-serializing jsonpath evaluation results: %s", err)
-	}
-	b = nil
-
-	// paginate
-	offset, limit, err := utils.GetPagingAttr(len(results), page, perPage, MaxPerPage)
-	if err != nil {
-		return nil, 0, &BadRequestError{S: fmt.Sprintf("unable to paginate: %s", err)}
-	}
-	// return the requested page
-	return results[offset : offset+limit], len(results), nil
+	return tds, nil
 }
 
 func (c *Controller) filterJSONPathBytes(query string) ([]byte, error) {
 	// query all items
-	b, err := c.listAllBytes()
+	b, err := c.storage.listAllBytes()
 	if err != nil {
 		return nil, err
 	}
@@ -288,85 +226,6 @@ func (c *Controller) filterJSONPathBytes(query string) ([]byte, error) {
 	b, err = jsonpath.Get(b, query)
 	if err != nil {
 		return nil, &BadRequestError{fmt.Sprintf("error evaluating jsonpath: %s", err)}
-	}
-
-	return b, nil
-}
-
-// Deprecated
-// Note: filterXPath performs several (de-)serializations
-// Use filterXPathBytes to query bytes directly
-func (c *Controller) filterXPath(path string, page, perPage int) ([]interface{}, int, error) {
-	var results []interface{}
-
-	// query all items
-	items, total, err := c.listAll()
-	if err != nil {
-		return nil, 0, err
-	}
-	if total == 0 {
-		return results, 0, nil
-	}
-
-	// serialize to json
-	b, err := json.Marshal(items)
-	if err != nil {
-		return nil, 0, fmt.Errorf("error serializing entries for xpath filtering: %s", err)
-	}
-	items = nil
-
-	// parse the json document
-	doc, err := xpath.Parse(bytes.NewReader(b))
-	if err != nil {
-		return nil, 0, fmt.Errorf("error parsing serialized input for xpath filtering: %s", err)
-	}
-	b = nil
-
-	// filter with xpath
-	nodes, err := xpath.QueryAll(doc, path)
-	if err != nil {
-		return nil, 0, &BadRequestError{S: fmt.Sprintf("error filtering input with xpath: %s", err)}
-	}
-	for _, n := range nodes {
-		results = append(results, getObjectFromXPathNode(n))
-	}
-
-	// paginate
-	offset, limit, err := utils.GetPagingAttr(len(results), page, perPage, MaxPerPage)
-	if err != nil {
-		return nil, 0, &BadRequestError{S: fmt.Sprintf("unable to paginate: %s", err)}
-	}
-	// return the requested page
-	return results[offset : offset+limit], len(results), nil
-}
-
-func (c *Controller) filterXPathBytes(path string) ([]byte, error) {
-	// query all items
-	b, err := c.listAllBytes()
-	if err != nil {
-		return nil, err
-	}
-
-	// parse the json document
-	doc, err := xpath.Parse(bytes.NewReader(b))
-	if err != nil {
-		return nil, fmt.Errorf("error parsing serialized input for xpath filtering: %s", err)
-	}
-
-	// filter with xpath
-	nodes, err := xpath.QueryAll(doc, path)
-	if err != nil {
-		return nil, &BadRequestError{S: fmt.Sprintf("error filtering input with xpath: %s", err)}
-	}
-	results := make([]interface{}, len(nodes))
-	for i := range nodes {
-		results[i] = getObjectFromXPathNode(nodes[i])
-	}
-
-	// serialize
-	b, err = json.Marshal(results)
-	if err != nil {
-		return nil, fmt.Errorf("error serliazing results of xpath filtering: %s", err)
 	}
 
 	return b, nil
@@ -485,10 +344,6 @@ func getObjectFromXPathNode(n *xpath.Node) interface{} {
 	}
 }
 
-func (c *Controller) total() (int, error) {
-	return c.storage.total()
-}
-
 func (c *Controller) cleanExpired() {
 	defer func() {
 		if r := recover(); r != nil {
@@ -500,7 +355,7 @@ func (c *Controller) cleanExpired() {
 	for t := range time.Tick(controllerExpiryCleanupInterval) {
 		var expiredServices []ThingDescription
 
-		for td := range c.storage.iterator() {
+		for td := range c.storage.iterate() {
 			if expires := ThingExpires(ThingRegistration(td)); expires != nil {
 				if t.After(*expires) {
 					expiredServices = append(expiredServices, td)

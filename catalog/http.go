@@ -13,12 +13,10 @@ import (
 )
 
 const (
-	MaxLimit = 100
 	// query parameters
 	QueryParamOffset      = "offset"
 	QueryParamLimit       = "limit"
 	QueryParamJSONPath    = "jsonpath"
-	QueryParamXPath       = "xpath"
 	QueryParamSearchQuery = "query"
 )
 
@@ -282,7 +280,7 @@ func (a *HTTPAPI) listPaginated(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	items, _, err := a.controller.list(offset, limit)
+	items, err := a.controller.listPaginate(offset, limit)
 	if err != nil {
 		switch err.(type) {
 		case *BadRequestError:
@@ -389,89 +387,5 @@ func (a *HTTPAPI) SearchJSONPath(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		log.Printf("ERROR writing HTTP response: %s", err)
 		return
-	}
-}
-
-// SearchXPath returns the XPath query result
-func (a *HTTPAPI) SearchXPath(w http.ResponseWriter, req *http.Request) {
-	err := req.ParseForm()
-	if err != nil {
-		ErrorResponse(w, http.StatusBadRequest, "Error parsing the query: ", err.Error())
-		return
-	}
-
-	query := req.Form.Get(QueryParamSearchQuery)
-	if query == "" {
-		ErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("No value for %s argument", QueryParamSearchQuery))
-		return
-	}
-	w.Header().Add("X-Request-Query", query)
-
-	b, err := a.controller.filterXPathBytes(query)
-	if err != nil {
-		switch err.(type) {
-		case *BadRequestError:
-			ErrorResponse(w, http.StatusBadRequest, err.Error())
-			return
-		default:
-			ErrorResponse(w, http.StatusInternalServerError, err.Error())
-			return
-		}
-	}
-
-	w.Header().Set("Content-Type", wot.MediaTypeJSON)
-	w.Header().Set("X-Request-URL", req.RequestURI)
-	_, err = w.Write(b)
-	if err != nil {
-		log.Printf("ERROR writing HTTP response: %s", err)
-		return
-	}
-}
-
-// GetValidation handler gets validation for the request body
-func (a *HTTPAPI) GetValidation(w http.ResponseWriter, req *http.Request) {
-	body, err := ioutil.ReadAll(req.Body)
-	req.Body.Close()
-	if err != nil {
-		ErrorResponse(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	if len(body) == 0 {
-		ErrorResponse(w, http.StatusBadRequest, "Empty request body")
-		return
-	}
-
-	var td ThingDescription
-	if err := json.Unmarshal(body, &td); err != nil {
-		ErrorResponse(w, http.StatusBadRequest, "Error processing the request: ", err.Error())
-		return
-	}
-
-	var response ValidationResult
-	results, err := validateThingDescription(td)
-	if err != nil {
-		ErrorResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-	if len(results) != 0 {
-		for _, result := range results {
-			response.Errors = append(response.Errors, fmt.Sprintf("%s: %s", result.Field, result.Descr))
-		}
-	} else {
-		response.Valid = true
-	}
-
-	b, err := json.Marshal(response)
-	if err != nil {
-		ErrorResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	w.Header().Set("Content-Type", wot.MediaTypeJSON)
-	w.WriteHeader(http.StatusOK)
-	_, err = w.Write(b)
-	if err != nil {
-		log.Printf("ERROR writing HTTP response: %s", err)
 	}
 }

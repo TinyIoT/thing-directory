@@ -10,8 +10,6 @@ import (
 type ThingDescription = map[string]interface{}
 
 const (
-	ResponseContextURL = "https://linksmart.eu/thing-directory/context.jsonld"
-	ResponseType       = "Catalog"
 	// Storage backend types
 	BackendMemory  = "memory"
 	BackendLevelDB = "leveldb"
@@ -32,21 +30,11 @@ type CatalogController interface {
 	update(id string, d ThingDescription) error
 	patch(id string, d ThingDescription) error
 	delete(id string) error
-	list(offset, limit int) ([]ThingDescription, int, error)
-	listAllBytes() ([]byte, error)
-	// Deprecated
-	filterJSONPath(path string, page, perPage int) ([]interface{}, int, error)
+	listPaginate(offset, limit int) ([]ThingDescription, error)
 	filterJSONPathBytes(query string) ([]byte, error)
-	// Deprecated
-	filterXPath(path string, page, perPage int) ([]interface{}, int, error)
-	filterXPathBytes(query string) ([]byte, error)
-	//filterXPathBytes(query string) ([]byte, error)
-	total() (int, error)
 	iterateBytes(ctx context.Context) <-chan []byte
 	cleanExpired()
-
 	Stop()
-
 	AddSubscriber(listener EventListener)
 }
 
@@ -56,10 +44,9 @@ type Storage interface {
 	update(id string, td ThingDescription) error
 	delete(id string) error
 	get(id string) (ThingDescription, error)
-	list(offset, limit int) ([]ThingDescription, int, error)
+	listPaginate(offset, limit int) ([]ThingDescription, error)
 	listAllBytes() ([]byte, error)
-	total() (int, error)
-	iterator() <-chan ThingDescription
+	iterate() <-chan ThingDescription
 	iterateBytes(ctx context.Context) <-chan []byte
 	Close()
 }

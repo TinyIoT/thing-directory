@@ -239,10 +239,6 @@ func setupHTTPRouter(config *HTTPConfig, api *catalog.HTTPAPI, notifAPI *notific
 
 	// search
 	r.get("/search/jsonpath", commonHandlers.ThenFunc(api.SearchJSONPath))
-	r.get("/search/xpath", commonHandlers.ThenFunc(api.SearchXPath))
-
-	// TD validation
-	r.get("/validation", commonHandlers.ThenFunc(api.GetValidation))
 
 	//TD notification
 	r.get("/events", commonHandlers.ThenFunc(notifAPI.SubscribeEvent))
