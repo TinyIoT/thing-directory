@@ -1,4 +1,3 @@
-
 package catalog
 
 import (
@@ -11,7 +10,6 @@ import (
 	"net/url"
 	"sync"
 
-	"github.com/linksmart/service-catalog/v3/utils"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/opt"
 )
@@ -122,45 +120,31 @@ func (s *LevelDBStorage) delete(id string) error {
 	return nil
 }
 
-func (s *LevelDBStorage) list(page int, perPage int) ([]ThingDescription, int, error) {
-
-	total, err := s.total()
-	if err != nil {
-		return nil, 0, err
-	}
-	offset, limit, err := utils.GetPagingAttr(total, page, perPage, MaxPerPage)
-	if err != nil {
-		return nil, 0, &BadRequestError{fmt.Sprintf("Unable to paginate: %s", err)}
-	}
+func (s *LevelDBStorage) listPaginate(offset, limit int) ([]ThingDescription, error) {
 
 	// TODO: is there a better way to do this?
-	// github.com/syndtr/goleveldb/leveldb/iterator
-	devices := make([]ThingDescription, limit)
+	TDs := make([]ThingDescription, 0, limit)
 	s.wg.Add(1)
 	iter := s.db.NewIterator(nil, nil)
-	i := 0
-	for iter.Next() {
-		var td ThingDescription
-		err = json.Unmarshal(iter.Value(), &td)
-		if err != nil {
-			return nil, 0, err
-		}
 
+	for i := 0; i < offset+limit && iter.Next(); i++ {
 		if i >= offset && i < offset+limit {
-			devices[i-offset] = td
-		} else if i >= offset+limit {
-			break
+			var td ThingDescription
+			err := json.Unmarshal(iter.Value(), &td)
+			if err != nil {
+				return nil, err
+			}
+			TDs = append(TDs, td)
 		}
-		i++
 	}
 	iter.Release()
 	s.wg.Done()
-	err = iter.Error()
+	err := iter.Error()
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 
-	return devices, total, nil
+	return TDs, nil
 }
 
 func (s *LevelDBStorage) listAllBytes() ([]byte, error) {
@@ -192,23 +176,7 @@ func (s *LevelDBStorage) listAllBytes() ([]byte, error) {
 	return buffer.Bytes(), nil
 }
 
-func (s *LevelDBStorage) total() (int, error) {
-	c := 0
-	s.wg.Add(1)
-	iter := s.db.NewIterator(nil, nil)
-	for iter.Next() {
-		c++
-	}
-	iter.Release()
-	s.wg.Done()
-	err := iter.Error()
-	if err != nil {
-		return 0, err
-	}
-	return c, nil
-}
-
-func (s *LevelDBStorage) iterator() <-chan ThingDescription {
+func (s *LevelDBStorage) iterate() <-chan ThingDescription {
 	serviceIter := make(chan ThingDescription)
 
 	go func() {
