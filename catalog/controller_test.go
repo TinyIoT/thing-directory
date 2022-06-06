@@ -1,7 +1,7 @@
-
 package catalog
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"reflect"
@@ -40,7 +40,7 @@ func setup(t *testing.T) CatalogController {
 	}
 
 	t.Cleanup(func() {
-		//t.Logf("Cleaning up...")
+		// t.Logf("Cleaning up...")
 		controller.Stop()
 		storage.Close()
 		err = os.RemoveAll(tempDir) // Remove temp files
@@ -266,7 +266,7 @@ func TestControllerDelete(t *testing.T) {
 	})
 }
 
-func TestControllerList(t *testing.T) {
+func TestControllerListPaginate(t *testing.T) {
 	controller := setup(t)
 
 	// add several entries
@@ -297,38 +297,34 @@ func TestControllerList(t *testing.T) {
 		addedTDs = append(addedTDs, sd)
 	}
 
-	// query all pages
-	var collection []ThingDescription
-	perPage := 3
-	for page := 1; ; page++ {
-		collectionPage, total, err := controller.list(page, perPage)
-		if err != nil {
-			t.Fatal("Error getting list of TDs:", err.Error())
-		}
+	var list []ThingDescription
 
-		if page == 1 && len(collectionPage) != 3 {
-			t.Fatalf("Page 1 has %d entries instead of 3", len(collectionPage))
-		}
-		if page == 2 && len(collectionPage) != 2 {
-			t.Fatalf("Page 2 has %d entries instead of 2", len(collectionPage))
-		}
-		if page == 3 && len(collectionPage) != 0 {
-			t.Fatalf("Page 3 has %d entries instead of being blank", len(collectionPage))
-		}
-
-		collection = append(collection, collectionPage...)
-
-		if page*perPage >= total {
-			break
-		}
+	// [0-3)
+	TDs, err := controller.listPaginate(0, 3)
+	if err != nil {
+		t.Fatal("Error getting list of TDs:", err.Error())
 	}
+	if len(TDs) != 3 {
+		t.Fatalf("Page has %d entries instead of 3", len(TDs))
+	}
+	list = append(list, TDs...)
 
-	if len(collection) != 5 {
-		t.Fatalf("Catalog contains %d entries instead of 5", len(collection))
+	// [3-end)
+	TDs, err = controller.listPaginate(3, 10)
+	if err != nil {
+		t.Fatal("Error getting list of TDs:", err.Error())
+	}
+	if len(TDs) != 2 {
+		t.Fatalf("Page has %d entries instead of 2", len(TDs))
+	}
+	list = append(list, TDs...)
+
+	if len(list) != 5 {
+		t.Fatalf("Catalog contains %d entries instead of 5", len(list))
 	}
 
 	// compare added and collection
-	for i, sd := range collection {
+	for i, sd := range list {
 		if !reflect.DeepEqual(addedTDs[i], sd) {
 			t.Fatalf("TDs listed in catalog is different with the one stored:\n Stored:\n%v\n Listed\n%v\n",
 				addedTDs[i], sd)
@@ -391,70 +387,26 @@ func TestControllerFilter(t *testing.T) {
 		t.Fatal("Error adding a TD:", err.Error())
 	}
 
-	t.Run("filter with JSONPath", func(t *testing.T) {
-		TDs, total, err := controller.filterJSONPath("$[?(@.title=='interesting thing')]", 1, 10)
+	t.Run("JSONPath filter", func(t *testing.T) {
+		b, err := controller.filterJSONPathBytes("$[?(@.title=='interesting thing')]")
 		if err != nil {
 			t.Fatal("Error filtering:", err.Error())
 		}
-		if total != 2 {
-			t.Fatalf("Returned %d instead of 2 TDs when filtering based on title: \n%v", total, TDs)
+		var TDs []ThingDescription
+		err = json.Unmarshal(b, &TDs)
+		if err != nil {
+			t.Fatal("Error unmarshalling output:", err.Error())
+		}
+		if len(TDs) != 2 {
+			t.Fatalf("Returned %d instead of 2 TDs when filtering based on title: \n%v", len(TDs), TDs)
 		}
 		for _, td := range TDs {
-			if td.(map[string]any)["title"] != "interesting thing" {
+			if td["title"].(string) != "interesting thing" {
 				t.Fatal("Wrong results when filtering based on title:\n", td)
 			}
 		}
 	})
 
-	t.Run("filter with XPath", func(t *testing.T) {
-		TDs, total, err := controller.filterXPath("*[title='interesting thing']", 1, 10)
-		if err != nil {
-			t.Fatal("Error filtering:", err.Error())
-		}
-		if total != 2 {
-			t.Fatalf("Returned %d instead of 2 TDs when filtering based on title: \n%v", total, TDs)
-		}
-		for _, td := range TDs {
-			if td.(map[string]any)["title"] != "interesting thing" {
-				t.Fatal("Wrong results when filtering based on title:\n", td)
-			}
-		}
-	})
-
-}
-
-func TestControllerTotal(t *testing.T) {
-	controller := setup(t)
-
-	const createTotal = 5
-
-	for i := 0; i < createTotal; i++ {
-		var td = ThingDescription{
-			"@context": "https://www.w3.org/2019/wot/td/v1",
-			"id":       "urn:example:test/thing_" + strconv.Itoa(i),
-			"title":    "example thing",
-			"security": []string{"basic_sc"},
-			"securityDefinitions": map[string]any{
-				"basic_sc": map[string]string{
-					"in":     "header",
-					"scheme": "basic",
-				},
-			},
-		}
-
-		_, err := controller.add(td)
-		if err != nil {
-			t.Fatalf("Error adding a TD: %s", err)
-		}
-	}
-
-	total, err := controller.total()
-	if err != nil {
-		t.Fatalf("Error getting total of TD: %s", err)
-	}
-	if total != createTotal {
-		t.Fatalf("Expected total %d but got %d", createTotal, total)
-	}
 }
 
 func TestControllerCleanExpired(t *testing.T) {
