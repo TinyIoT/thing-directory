@@ -32,6 +32,7 @@ parts:
     source: .
     build-packages:
       - curl
+      - git
     override-pull: |
       snapcraftctl pull
       snapcraftctl set-version $(git describe)
