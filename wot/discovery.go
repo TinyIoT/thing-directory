@@ -20,9 +20,9 @@ const (
 	KeyThingRegistrationExpires  = "expires"
 	KeyThingRegistrationTTL      = "ttl"
 	// TD event types
-	EventTypeCreate = "create"
-	EventTypeUpdate = "update"
-	EventTypeDelete = "delete"
+	EventTypeCreate = "thing_created"
+	EventTypeUpdate = "thing_updated"
+	EventTypeDelete = "thing_deleted"
 )
 
 type EnrichedTD struct {
