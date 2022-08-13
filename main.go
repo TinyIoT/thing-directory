@@ -30,7 +30,7 @@ const TinyIoT = `
 
 const (
 	SwaggerUISchemeLess = "petstore.swagger.io"
-	Spec                = "https://raw.githubusercontent.com/linksmart/thing-directory/{version}/apidoc/openapi-spec.yml"
+	Spec                = "https://raw.githubusercontent.com/tinyiot/thing-directory/{version}/apidoc/openapi-spec.yml"
 	SourceCodeRepo      = "https://github.com/tinyiot/thing-directory"
 )
 
