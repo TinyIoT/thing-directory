@@ -4,7 +4,7 @@ openapi: 3.0.3
 #  - url: http://localhost:8081
 
 info:
-  version: "1.0.0-beta.24"
+  version: "1.0.0-beta.26"
   title: TinyIoT Thing Directory
   description: API documentation of the [TinyIoT Thing Directory](https://github.com/tinyiot/thing-directory)
   license:
@@ -13,7 +13,7 @@ info:
 
 tags:
   - name: things
-    description: Registration API
+    description: Things API
   - name: search
     description: Search API
   - name: events
