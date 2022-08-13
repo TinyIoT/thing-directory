@@ -35,7 +35,7 @@ parts:
       - git
     override-pull: |
       snapcraftctl pull
-      snapcraftctl set-version $(git describe)
+      snapcraftctl set-version $(git describe --tags)
     override-prime: |
       mkdir -p conf
       curl https://raw.githubusercontent.com/w3c/wot-thing-description/REC1.0/validation/td-json-schema-validation.json -o conf/wot_td_schema.json
