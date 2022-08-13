@@ -1,4 +1,4 @@
-FROM golang:1.14-alpine as builder
+FROM golang:1.18-alpine as builder
 
 COPY . /home
 
@@ -10,7 +10,7 @@ ARG buildnum
 RUN go build -v -ldflags "-X main.Version=$version -X main.BuildNumber=$buildnum"
 
 ###########
-FROM alpine
+FROM alpine:3
 
 RUN apk --no-cache add ca-certificates
 
