@@ -1,4 +1,3 @@
-
 package main
 
 import (
@@ -14,13 +13,12 @@ import (
 )
 
 type Config struct {
-	ServiceID      string         `json:"serviceID"`
-	Description    string         `json:"description"`
-	Validation     Validation     `json:"validation"`
-	HTTP           HTTPConfig     `json:"http"`
-	DNSSD          DNSSDConfig    `json:"dnssd"`
-	Storage        StorageConfig  `json:"storage"`
-	ServiceCatalog ServiceCatalog `json:"serviceCatalog"`
+	ServiceID   string        `json:"serviceID"`
+	Description string        `json:"description"`
+	Validation  Validation    `json:"validation"`
+	HTTP        HTTPConfig    `json:"http"`
+	DNSSD       DNSSDConfig   `json:"dnssd"`
+	Storage     StorageConfig `json:"storage"`
 }
 
 type Validation struct {
@@ -90,22 +88,6 @@ func (c *Config) Validate() error {
 	}
 	if !supportedBackends[c.Storage.Type] {
 		return fmt.Errorf("unsupported storage backend")
-	}
-
-	if c.ServiceCatalog.Enabled {
-		if c.ServiceCatalog.Endpoint == "" && c.ServiceCatalog.Discover {
-			return fmt.Errorf("Service Catalog must have either endpoint or set discovery flag")
-		}
-		if c.ServiceCatalog.TTL <= 0 {
-			return fmt.Errorf("Service Catalog must have TTL >= 0")
-		}
-		if c.ServiceCatalog.Auth.Enabled {
-			// Validate ticket obtainer config
-			err = c.ServiceCatalog.Auth.Validate()
-			if err != nil {
-				return fmt.Errorf("invalid Service Catalog auth: %s", err)
-			}
-		}
 	}
 
 	return err

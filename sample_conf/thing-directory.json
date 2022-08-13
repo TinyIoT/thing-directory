@@ -15,7 +15,6 @@
       "interfaces": []
     }
   },
-  "serviceCatalog": null,
   "http": {
     "publicEndpoint": "http://fqdn-of-the-host:8081",
     "bindAddr": "0.0.0.0",
