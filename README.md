@@ -12,7 +12,6 @@ Visit the following pages to get started:
 ## Features
 * Service Discovery
   * [DNS-SD registration](../../wiki/Discovery-with-DNS-SD)
-  * [LinkSmart Service Catalog](https://github.com/linksmart/service-catalog) registration
 * RESTful API
   * [HTTP API][1]
     * Thing Description (TD) CRUD, catalog, and validation

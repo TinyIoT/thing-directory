@@ -150,21 +150,6 @@ func main() {
 		defer shutdown()
 	}
 
-	// Register in the LinkSmart Service Catalog
-	if config.ServiceCatalog.Enabled {
-		unregisterService, err := registerInServiceCatalog(config)
-		if err != nil {
-			panic("Error registering service:" + err.Error())
-		}
-		// Unregister from the Service Catalog
-		defer func() {
-			err := unregisterService()
-			if err != nil {
-				log.Printf("Error unregistering service from catalog: %s", err)
-			}
-		}()
-	}
-
 	log.Println("Ready!")
 
 	// Ctrl+C / Kill handling
