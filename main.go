@@ -204,17 +204,7 @@ func setupHTTPRouter(config *HTTPConfig, api *catalog.HTTPAPI, notifAPI *notific
 	r.get("/openapi-spec-proxy", commonHandlers.ThenFunc(apiSpecProxy))
 	r.get("/openapi-spec-proxy/{basepath:.+}", commonHandlers.ThenFunc(apiSpecProxy))
 
-	// Deprecated: use /things and /search instead
-	// TD CRUD, listing, filtering
-	// r.get("/td", commonHandlers.ThenFunc(api.GetMany))
-	// r.get("/td-chunked", commonHandlers.ThenFunc(api.GetAll))
-	// r.post("/td", commonHandlers.ThenFunc(api.Post))
-	// r.get("/td/{id:.+}", commonHandlers.ThenFunc(api.Get))
-	// r.put("/td/{id:.+}", commonHandlers.ThenFunc(api.Put))
-	// r.patch("/td/{id:.+}", commonHandlers.ThenFunc(api.Patch))
-	// r.delete("/td/{id:.+}", commonHandlers.ThenFunc(api.Delete))
-
-	// CRUDL
+	// Things API (CRUDL)
 	r.post("/things", commonHandlers.ThenFunc(api.Post))             // create anonymous
 	r.put("/things/{id:.+}", commonHandlers.ThenFunc(api.Put))       // create or update
 	r.get("/things/{id:.+}", commonHandlers.ThenFunc(api.Get))       // retrieve
@@ -222,10 +212,10 @@ func setupHTTPRouter(config *HTTPConfig, api *catalog.HTTPAPI, notifAPI *notific
 	r.delete("/things/{id:.+}", commonHandlers.ThenFunc(api.Delete)) // delete
 	r.get("/things", commonHandlers.ThenFunc(api.List))              // listing
 
-	// search
+	// Search API
 	r.get("/search/jsonpath", commonHandlers.ThenFunc(api.SearchJSONPath))
 
-	//TD notification
+	// Events API
 	r.get("/events", commonHandlers.ThenFunc(notifAPI.SubscribeEvent))
 	r.get("/events/{type}", commonHandlers.ThenFunc(notifAPI.SubscribeEvent))
 
