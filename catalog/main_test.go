@@ -1,7 +1,7 @@
-
 package catalog
 
 import (
+	"bytes"
 	"encoding/json"
 	"os"
 	"reflect"
@@ -42,6 +42,12 @@ func serializedEqual(td1 ThingDescription, td2 ThingDescription) bool {
 	storedTDBytes, _ := json.Marshal(td2)
 
 	return reflect.DeepEqual(tdBytes, storedTDBytes)
+}
+
+func copyMap(in, out interface{}) {
+	buf := new(bytes.Buffer)
+	json.NewEncoder(buf).Encode(in)
+	json.NewDecoder(buf).Decode(out)
 }
 
 func TestMain(m *testing.M) {
