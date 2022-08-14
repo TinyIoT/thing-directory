@@ -82,10 +82,10 @@ func (c *Controller) get(id string) (ThingDescription, error) {
 		return nil, err
 	}
 
-	//tr := ThingRegistration(td)
-	//now := time.Now()
-	//tr.Retrieved = &now
-	//td[wot.KeyThingRegistration] = tr
+	tr := ThingRegistration(td)
+	now := time.Now().UTC()
+	tr.Retrieved = &now
+	td[wot.KeyThingRegistration] = tr
 
 	return td, nil
 }

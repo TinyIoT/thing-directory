@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"reflect"
 	"strconv"
 	"strings"
 	"testing"
@@ -285,16 +284,14 @@ func TestControllerListPaginate(t *testing.T) {
 			},
 		}
 
-		id, err := controller.add(td)
+		tdCopy := make(map[string]any)
+		copyMap(&td, &tdCopy)
+		_, err := controller.add(tdCopy)
 		if err != nil {
 			t.Fatal("Error adding a TD:", err.Error())
 		}
-		sd, err := controller.get(id)
-		if err != nil {
-			t.Fatal("Error retrieving TD:", err.Error())
-		}
 
-		addedTDs = append(addedTDs, sd)
+		addedTDs = append(addedTDs, td)
 	}
 
 	var list []ThingDescription
@@ -324,10 +321,12 @@ func TestControllerListPaginate(t *testing.T) {
 	}
 
 	// compare added and collection
-	for i, sd := range list {
-		if !reflect.DeepEqual(addedTDs[i], sd) {
-			t.Fatalf("TDs listed in catalog is different with the one stored:\n Stored:\n%v\n Listed\n%v\n",
-				addedTDs[i], sd)
+	for i, li := range list {
+		// remove the whole registration object because it contains dynamic values
+		delete(sd, "registration")
+		if !serializedEqual(addedTDs[i], li) {
+			t.Fatalf("TD added in catalog is different with the one listed:\n Added:\n%v\n Listed:\n%v\n",
+				addedTDs[i], li)
 		}
 	}
 }
