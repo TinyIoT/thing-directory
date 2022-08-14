@@ -322,8 +322,8 @@ func TestControllerListPaginate(t *testing.T) {
 
 	// compare added and collection
 	for i, li := range list {
-		// remove the whole registration object because it contains dynamic values
-		delete(sd, "registration")
+		// remove the whole registration object because it contains system-generated and dynamic values 
+		delete(li, "registration")
 		if !serializedEqual(addedTDs[i], li) {
 			t.Fatalf("TD added in catalog is different with the one listed:\n Added:\n%v\n Listed:\n%v\n",
 				addedTDs[i], li)
