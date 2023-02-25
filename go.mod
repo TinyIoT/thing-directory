@@ -14,15 +14,13 @@ require (
 	github.com/justinas/alice v0.0.0-20160512134231-052b8b6c18ed
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/linksmart/go-sec v1.4.2
-	github.com/linksmart/service-catalog/v3 v3.0.0-beta.1.0.20200302143206-92739dd2a511
 	github.com/miekg/dns v1.1.29 // indirect
 	github.com/onsi/ginkgo v1.12.0 // indirect
 	github.com/onsi/gomega v1.9.0 // indirect
 	github.com/rs/cors v1.7.0
 	github.com/satori/go.uuid v1.2.0
+	github.com/stretchr/testify v1.5.1 // indirect
 	github.com/syndtr/goleveldb v1.0.0
 	github.com/xeipuuv/gojsonschema v1.2.0
-	golang.org/x/crypto v0.0.0-20200510223506-06a226fb4e37 // indirect
-	golang.org/x/net v0.0.0-20200520182314-0ba52f642ac2 // indirect
-	golang.org/x/sys v0.0.0-20220422013727-9388b58f7150 // indirect
+	golang.org/x/crypto v0.1.0 // indirect
 )
